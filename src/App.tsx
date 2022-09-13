@@ -1,15 +1,14 @@
 import React, {ReactElement} from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import ConverterForm from './components/ConverterForm';
-import './App.css';
+import CurrencyConverter from './components/CurrencyConverter';
 
 function App(): ReactElement {
     return (
         <>
             <div className="App">
                 <Header/>
-                <ConverterForm/>    
+                <CurrencyConverter/>
                 <Footer/>
             </div>
         </>
