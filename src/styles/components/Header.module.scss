@@ -1,0 +1,10 @@
+@import '../core/variables';
+
+.mainHeader {
+    background-color: $primary-color;
+    color: $text-color;
+
+    a {
+        color: $text-color;
+    }
+}
