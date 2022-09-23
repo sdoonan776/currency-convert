@@ -9,6 +9,9 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 
 import styles from '../styles/components/CurrencyConverter.module.scss';
 
+import currencies from '../currencies.json';
+import {CurrencyInterface} from "../interfaces/currency";
+
 function CurrencyConverter(): ReactElement {
     const [currencyFrom, setCurrencyFrom] = useState<string>('');
     const [currencyTo, setCurrencyTo] = useState<string>('');
@@ -16,14 +19,23 @@ function CurrencyConverter(): ReactElement {
 
     useEffect(() => {
     });
+
+    const handleCurrencyTo = (e: MouseEvent<HTMLButtonElement>): void => {
+
+    };
     
     const handleConversion = (e: MouseEvent<HTMLButtonElement>): void => {
         e.preventDefault();
-        axios.post('https://community-neutrino-currency-conversion.p.rapidapi.com/convert', {
+        axios.get('https://currency-converter114.p.rapidapi.com/', {
+            'params': {
+                fromCurrency: currencyFrom,
+                toCurrency: currencyTo,
+                amount: currencyValue
+            },
             'headers': {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-RapidAPI-Key': '25c4e740demsh5ccf7fc1d6ae68cp173e85jsna94415c52dc7',
-                'X-RapidAPI-Host': 'community-neutrino-currency-conversion.p.rapidapi.com'
+                'X-RapidAPI-Host': 'currency-converter114.p.rapidapi.com'
             }
         }).then((response: AxiosResponse) => {
             console.log(response);
@@ -37,39 +49,44 @@ function CurrencyConverter(): ReactElement {
 
     return (
         <>
-            <Container>
+            <Container fluid>
                 <Row>
                     <Col lg={8} className={styles.converterCol}>
-                        <Card>
-                            <h2>Choose a Currency to Convert</h2>
+                        <Card className={styles.converterCard}>
                             <Form>
                                 <Container>
-                                    <Row className={styles.converterForm}>
-                                        <Form.Group className="mb-3" controlId="amount">
+                                    <h2>Choose a Currency to Convert</h2>
+                                    <div className={styles.converterForm}>
+                                        <Form.Group className={`${styles.formGroup}`} controlId="amount">
                                             <Form.Label>Amount</Form.Label>
-                                            <Form.Control/>
+                                            <Form.Control type="number" placeholder="Enter Currency Amount"/>
                                         </Form.Group>
 
-                                        <Form.Group className="mb-3" controlId="currencyFrom">
-                                            <Form.Label>Currency From</Form.Label>
-                                            <Form.Select aria-label="Default select example">
-                                                <option value=""></option>
+                                        <Form.Group className={`${styles.formGroup}`} controlId="currencyFrom">
+                                            <Form.Label>From</Form.Label>
+                                            <Form.Select aria-label="Currency from select">
+                                                {currencies.map((currency: CurrencyInterface) =>
+                                                    <option value={currency.code}>{currency.name}</option>
+                                                )}
                                             </Form.Select>
                                         </Form.Group>
 
-                                        <Form.Group className="mb-3" controlId="currencyTo">
-                                            <Form.Label>Currency To</Form.Label>
-                                            <Form.Select aria-label="Default select example">
+                                        <Form.Group className={`${styles.formGroup}`} controlId="currencyTo">
+                                            <Form.Label>To</Form.Label>
+                                            <Form.Select aria-label="Currency to Select">
+                                                {currencies.map((currency: CurrencyInterface) =>
+                                                    <option value={currency.code}>{currency.name}</option>
+                                                )}
                                                 <option value=""></option>
                                             </Form.Select>
                                         </Form.Group>
-                                    </Row>
+                                    </div>
 
-                                    <Row>
+                                    <div>
                                         <Button onClick={handleConversion} variant="primary" type="submit">
                                             Convert
                                         </Button>
-                                    </Row>
+                                    </div>
                                 </Container>
 
                             </Form>

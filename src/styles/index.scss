@@ -1,6 +1,10 @@
 @import "~bootstrap/scss/bootstrap";
 @import "./core/variables";
 
+.App {
+    background-color: $primary-color;
+}
+
 .container {
     font-size: 1.2em;
 }
