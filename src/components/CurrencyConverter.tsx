@@ -1,4 +1,4 @@
-import React, {useState, useEffect, ReactElement, MouseEvent} from 'react';
+import React, {useState, useEffect, ReactElement, MouseEvent, ChangeEvent, FormEvent} from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -15,36 +15,32 @@ import {CurrencyInterface} from "../interfaces/currency";
 function CurrencyConverter(): ReactElement {
     const [currencyFrom, setCurrencyFrom] = useState<string>('');
     const [currencyTo, setCurrencyTo] = useState<string>('');
-    const [currencyValue, setCurrencyValue] = useState<number>(0);
+    const [amount, setAmount] = useState<string>('');
 
     useEffect(() => {
     });
 
-    const handleCurrencyTo = (e: MouseEvent<HTMLButtonElement>): void => {
-
-    };
-
     const handleCurrencySwitch = () => {
-
+        setCurrencyFrom(currencyFrom);
+        setCurrencyTo(currencyTo);
     };
     
     const handleConversion = (e: MouseEvent<HTMLButtonElement>): void => {
         e.preventDefault();
-        axios.get('https://currency-converter114.p.rapidapi.com/', {
-            'params': {
-                fromCurrency: currencyFrom,
-                toCurrency: currencyTo,
-                amount: currencyValue
-            },
-            'headers': {
-                'Content-Type': 'application/x-www-form-urlencoded',
+
+        if(!currencyFrom)
+
+        axios.get(`https://currency-converter114.p.rapidapi.com?fromCurrency=${currencyFrom}&toCurrency=${currencyTo}&amount=${amount}`, {
+            headers: {
+                'Content-Type': 'application/json',
                 'X-RapidAPI-Key': '25c4e740demsh5ccf7fc1d6ae68cp173e85jsna94415c52dc7',
                 'X-RapidAPI-Host': 'currency-converter114.p.rapidapi.com'
             }
         }).then((response: AxiosResponse) => {
+            // console.log(response);
+            return response.data;
+        }).then((response: AxiosResponse) => {
             console.log(response);
-            // return response.json();
-        }).then(() => {
             // setCurrencyFrom() 
         }).catch((err: AxiosError) => {
             console.log(err);
@@ -63,12 +59,12 @@ function CurrencyConverter(): ReactElement {
                                     <div className={styles.converterForm}>
                                         <Form.Group className={`${styles.formGroup}`} controlId="amount">
                                             <Form.Label>Amount</Form.Label>
-                                            <Form.Control type="number" placeholder="Enter Currency Amount"/>
+                                            <Form.Control type="number" placeholder="Enter Currency Amount" onChange={(e: ChangeEvent<HTMLInputElement>) => setAmount(e.target.value)}/>
                                         </Form.Group>
 
                                         <Form.Group className={`${styles.formGroup}`} controlId="currencyFrom">
                                             <Form.Label>From</Form.Label>
-                                            <Form.Select>
+                                            <Form.Select onChange={(e: ChangeEvent<HTMLSelectElement>) => setCurrencyFrom(e.target.value)}>
                                                 {currencies.map((currency: CurrencyInterface) =>
                                                     <option value={currency.code}>{currency.name}</option>
                                                 )}
@@ -83,11 +79,10 @@ function CurrencyConverter(): ReactElement {
 
                                         <Form.Group className={`${styles.formGroup}`} controlId="currencyTo">
                                             <Form.Label>To</Form.Label>
-                                            <Form.Select>
+                                            <Form.Select onChange={(e: ChangeEvent<HTMLSelectElement>) => setCurrencyTo(e.target.value)}>
                                                 {currencies.map((currency: CurrencyInterface) =>
                                                     <option value={currency.code}>{currency.name}</option>
                                                 )}
-                                                <option value=""></option>
                                             </Form.Select>
                                         </Form.Group>
                                     </div>
