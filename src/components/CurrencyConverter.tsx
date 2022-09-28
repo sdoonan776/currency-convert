@@ -23,6 +23,10 @@ function CurrencyConverter(): ReactElement {
     const handleCurrencyTo = (e: MouseEvent<HTMLButtonElement>): void => {
 
     };
+
+    const handleCurrencySwitch = () => {
+
+    };
     
     const handleConversion = (e: MouseEvent<HTMLButtonElement>): void => {
         e.preventDefault();
@@ -64,16 +68,22 @@ function CurrencyConverter(): ReactElement {
 
                                         <Form.Group className={`${styles.formGroup}`} controlId="currencyFrom">
                                             <Form.Label>From</Form.Label>
-                                            <Form.Select aria-label="Currency from select">
+                                            <Form.Select>
                                                 {currencies.map((currency: CurrencyInterface) =>
                                                     <option value={currency.code}>{currency.name}</option>
                                                 )}
                                             </Form.Select>
                                         </Form.Group>
 
+                                        <Form.Group className={styles.formGroup}>
+                                            <a className={styles.switchButton} onClick={handleCurrencySwitch}>
+                                                <i className="fa-solid fa-arrow-right-arrow-left"></i>
+                                            </a>
+                                        </Form.Group>
+
                                         <Form.Group className={`${styles.formGroup}`} controlId="currencyTo">
                                             <Form.Label>To</Form.Label>
-                                            <Form.Select aria-label="Currency to Select">
+                                            <Form.Select>
                                                 {currencies.map((currency: CurrencyInterface) =>
                                                     <option value={currency.code}>{currency.name}</option>
                                                 )}
@@ -86,6 +96,9 @@ function CurrencyConverter(): ReactElement {
                                         <Button onClick={handleConversion} variant="primary" type="submit">
                                             Convert
                                         </Button>
+                                    </div>
+                                    <div>
+
                                     </div>
                                 </Container>
 

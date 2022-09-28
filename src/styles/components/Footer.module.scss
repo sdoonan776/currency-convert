@@ -1,1 +1,11 @@
 @import '../core/variables';
+
+.footer {
+    border-top: 1px solid #fff;
+}
+
+.footerText {
+    color: $text-color;
+    margin: 5em auto;
+    text-align: center;
+}
