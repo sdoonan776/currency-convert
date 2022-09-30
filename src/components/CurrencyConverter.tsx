@@ -19,11 +19,28 @@ function CurrencyConverter(): ReactElement {
     const [amount, setAmount] = useState<string>('');
     const [errors, setErrors] = useState<string[]>([]);
     const [showErrors, setShowErrors] = useState<boolean>(false);
+    const [currencyRates, setCurrencyRates] = useState<string[]>([])
 
     useEffect(() => {
         setCurrencyFrom('CAD');
         setCurrencyTo('GPB');
-    });
+
+        axios.get(`https://currencyscoop.p.rapidapi.com/latest`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'X-RapidAPI-Key': '25c4e740demsh5ccf7fc1d6ae68cp173e85jsna94415c52dc7',
+                'X-RapidAPI-Host': 'currencyscoop.p.rapidapi.com'
+            }
+        }).then((response: AxiosResponse) => {
+            // console.log(response.data.response.rates);
+            return response.data.response.rates;
+        }).then((response) => {
+            // console.log(response);
+            setCurrencyRates(response);
+        }).catch((err: AxiosError) => {
+            console.log(err);
+        });
+    },[currencyFrom, currencyTo, currencyRates]);
 
     const handleCurrencySwitch = (): void => {
         setCurrencyFrom(currencyFrom);
@@ -39,21 +56,8 @@ function CurrencyConverter(): ReactElement {
            setShowErrors(true);
         }
 
-        axios.get(`https://currencyscoop.p.rapidapi.com/latest`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'X-RapidAPI-Key': '25c4e740demsh5ccf7fc1d6ae68cp173e85jsna94415c52dc7',
-                'X-RapidAPI-Host': 'currencyscoop.p.rapidapi.com'
-            }
-        }).then((response: AxiosResponse) => {
-            console.log(response.data.response.rates);
-            // return response.data;
-        }).then((response) => {
-            console.log(response);
-            // setCurrencyFrom()
-        }).catch((err: AxiosError) => {
-            console.log(err);
-        });
+        console.log(currencyRates);
+
     };
 
     return (
@@ -69,8 +73,8 @@ function CurrencyConverter(): ReactElement {
                                             <>
                                                 <Alert key="danger" onClose={() => setShowErrors(false)} variant="danger" dismissible>
                                                     <>
-                                                        {errors.map((error: string) =>
-                                                            <p>
+                                                        {errors.map((error: string, i: number) =>
+                                                            <p key={i}>
                                                                 { error }
                                                             </p>
                                                         )}
@@ -87,13 +91,13 @@ function CurrencyConverter(): ReactElement {
                                         <Form.Group className={`${styles.formGroup}`} controlId="currencyFrom">
                                             <Form.Label>From</Form.Label>
                                             <Form.Select onChange={(e: ChangeEvent<HTMLSelectElement>) => setCurrencyFrom(e.target.value)}>
-                                                {currencies.map((currency: CurrencyInterface) =>
+                                                {currencies.map((currency: CurrencyInterface, i: number) =>
                                                     <>
-                                                        {currency.code === currencyFrom ?
+                                                        {currency.code === currencyFrom ? (
                                                             <option selected value={currency.code}>{currency.name}</option>
-                                                                :
+                                                        ) : (
                                                             <option value={currency.code}>{currency.name}</option>
-                                                        }
+                                                        )}
                                                     </>
                                                 )}
                                             </Form.Select>
@@ -108,13 +112,13 @@ function CurrencyConverter(): ReactElement {
                                         <Form.Group className={`${styles.formGroup}`} controlId="currencyTo">
                                             <Form.Label>To</Form.Label>
                                             <Form.Select onChange={(e: ChangeEvent<HTMLSelectElement>) => setCurrencyTo(e.target.value)}>
-                                                {currencies.map((currency: CurrencyInterface) =>
+                                                {currencies.map((currency: CurrencyInterface, i: number) =>
                                                     <>
-                                                        {currency.code === currencyTo ?
+                                                        {currency.code === currencyTo ? (
                                                             <option selected value={currency.code}>{currency.name}</option>
-                                                                :
+                                                        ) : (
                                                             <option value={currency.code}>{currency.name}</option>
-                                                        }
+                                                        )}
                                                     </>
                                                 )}
                                             </Form.Select>
@@ -130,7 +134,6 @@ function CurrencyConverter(): ReactElement {
 
                                     </div>
                                 </Container>
-
                             </Form>
                         </Card>
                     </Col>
