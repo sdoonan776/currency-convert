@@ -19,27 +19,14 @@ function CurrencyConverter(): ReactElement {
     const [amount, setAmount] = useState<string>('');
     const [errors, setErrors] = useState<string[]>([]);
     const [showErrors, setShowErrors] = useState<boolean>(false);
-    const [currencyRates, setCurrencyRates] = useState<string[]>([])
+    const [currencyRates, setCurrencyRates] = useState<string>('');
 
     useEffect(() => {
         setCurrencyFrom('CAD');
         setCurrencyTo('GPB');
 
-        axios.get(`https://currencyscoop.p.rapidapi.com/latest`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'X-RapidAPI-Key': '25c4e740demsh5ccf7fc1d6ae68cp173e85jsna94415c52dc7',
-                'X-RapidAPI-Host': 'currencyscoop.p.rapidapi.com'
-            }
-        }).then((response: AxiosResponse) => {
-            // console.log(response.data.response.rates);
-            return response.data.response.rates;
-        }).then((response) => {
-            // console.log(response);
-            setCurrencyRates(response);
-        }).catch((err: AxiosError) => {
-            console.log(err);
-        });
+
+
     },[currencyFrom, currencyTo, currencyRates]);
 
     const handleCurrencySwitch = (): void => {
@@ -56,7 +43,25 @@ function CurrencyConverter(): ReactElement {
            setShowErrors(true);
         }
 
-        console.log(currencyRates);
+        axios.get(`https://currencyscoop.p.rapidapi.com/latest`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'X-RapidAPI-Key': '25c4e740demsh5ccf7fc1d6ae68cp173e85jsna94415c52dc7',
+                'X-RapidAPI-Host': 'currencyscoop.p.rapidapi.com'
+            }
+        }).then((response: AxiosResponse) => {
+            // console.log(response.data.response.rates);
+            return response.data.response.rates;
+        }).then((response) => {
+            console.log(response);
+            // setCurrencyRates(Object(response).keys);
+        }).catch((err: AxiosError) => {
+            console.log(err);
+        });
+
+        // for (let i = 0; i < currencyRates.length; i++) {
+        //     console.log(currencyRates[i]);
+        // }
 
     };
 
