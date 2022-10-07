@@ -3,7 +3,7 @@ import React, {ReactElement} from 'react';
 function HeroBanner(): ReactElement {
     return (
        <>
-            <div style={{ background: '#fff', height: '400px' }}></div>
+            <div style={{ background: 'url("../assets/polygon_banner_image.jpg")', height: '400px' }}></div>
        </>
     );
 };
