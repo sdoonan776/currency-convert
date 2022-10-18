@@ -5,13 +5,14 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
+import Spinner from'react-bootstrap/Spinner';
+import Alert from 'react-bootstrap/Alert';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
 import styles from '../styles/components/CurrencyConverter.module.scss';
 
 import currencies from '../currencies.json';
 import {CurrencyInterface} from "../interfaces/currency";
-import {Alert} from "react-bootstrap";
 
 interface RateItem {
     name: string
@@ -24,57 +25,52 @@ function CurrencyConverter(): ReactElement {
     const [amount, setAmount] = useState<number>(0);
     const [errors, setErrors] = useState<string[]>([]);
     const [showErrors, setShowErrors] = useState<boolean>(false);
-    const [currencyRates, setCurrencyRates] = useState<string[]>([]);
-    const [currencyFromRate, setCurrencyFromRate] = useState<number>(0);
-    const [currencyToRate, setCurrencyToRate] = useState<number>(0);
-    const [exchangedAmount, setExchangedAmount] = useState<number>(0);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [exchangeRate, setExchangeRate] = useState<number>(0);
+    const [exchangedResult, setExchangedResult] = useState<number>(0);
 
     useEffect(() => {
-        axios.get(`https://currencyscoop.p.rapidapi.com/latest`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'X-RapidAPI-Key': '25c4e740demsh5ccf7fc1d6ae68cp173e85jsna94415c52dc7',
-                'X-RapidAPI-Host': 'currencyscoop.p.rapidapi.com'
-            }
-        }).then((response: AxiosResponse) => {
-            return response.data.response.rates;
-        }).then((response: string[]) => {
-            setCurrencyRates(response);
-        }).catch((err: AxiosError) => {
-            console.log(err);
-        });
-
+        console.log(currencyFrom);
+        console.log(currencyTo);
     },[]);
 
     const handleCurrencySwitch = (): void => {
         setCurrencyFrom(currencyFrom);
         setCurrencyTo(currencyTo);
+        console.log(currencyFrom);
+        console.log(currencyTo);
     };
     
     const handleConversion = async (e: MouseEvent<HTMLButtonElement>): Promise<void> => {
         await e.preventDefault();
         await setErrors([]);
-        await setExchangedAmount(0);
-        await setCurrencyToRate(0);
+        await setExchangedResult(0);
 
         if (!amount) {
            setErrors(errors => [...errors, 'Please enter an amount']);
            setShowErrors(true);
         }
 
-        // setCurrencyToRate(Number(Object.entries(response).filter(rate => rate[0] === currencyTo)[0][1]));
+        setIsLoading(true);
 
-        setCurrencyToRate(Number(Object.entries(currencyRates).filter(rate => rate[0] === currencyTo)[0][1]));
+        await axios.get(`https://currency-exchange.p.rapidapi.com/exchange`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'X-RapidAPI-Key': '25c4e740demsh5ccf7fc1d6ae68cp173e85jsna94415c52dc7',
+                'X-RapidAPI-Host': 'currency-exchange.p.rapidapi.com'
+            },
+            params: {
+                from: currencyFrom,
+                to: currencyTo
+            }
+        }).then((response: AxiosResponse) => {
+            setIsLoading(false);
+            setExchangeRate(response.data);
+        }).catch((err: AxiosError) => {
+            console.log(err);
+        });
 
-        setExchangedAmount(amount * currencyToRate);
-        // console.log(exchangedAmount);
-
-        // let currentRate = ratesArray.map((rate) => rate).filter((name: string) => name === currencyFrom);
-
-        // console.log(currentRate);
-
-        // ratesArray.map((key, rate) => {
-        // });
+        setExchangedResult(exchangeRate * amount);
 
     };
 
@@ -131,14 +127,22 @@ function CurrencyConverter(): ReactElement {
                                         </Form.Group>
                                     </div>
 
+                                    {isLoading ?
+                                        <div>
+                                            <Spinner animation="border" role="status">
+                                                <span className="visually-hidden">Loading...</span>
+                                            </Spinner>
+                                        </div>
+                                    : ''}
+
                                     <div>
                                         <Button onClick={handleConversion} variant="primary" type="submit">
                                             Convert
                                         </Button>
                                     </div>
-                                    {exchangedAmount ?
+                                    { exchangedResult ?
                                         <div>
-                                            { exchangedAmount }
+                                            { exchangedResult }
                                         </div>
                                     : ''}
                                 </Container>
