@@ -14,7 +14,6 @@ import styles from '../styles/components/CurrencyConverter.module.scss';
 import currencies from '../currencies.json';
 import {CurrencyInterface} from "../interfaces/currency";
 import {formatCurrency} from "../utils/helpers";
-import {isNumber} from "util";
 
 function CurrencyConverter(): ReactElement {
     const [currencyFrom, setCurrencyFrom] = useState<string>('USD');
@@ -27,8 +26,7 @@ function CurrencyConverter(): ReactElement {
     const [exchangedAmount, setExchangedAmount] = useState<number>(0);
 
     useEffect(() => {
-        // console.log(currencies[0]);
-    },[currencyFrom, currencyTo]);
+    },[]);
 
     const handleCurrencySwitch = (): void => {
         setCurrencyFrom(currencyTo);
@@ -39,19 +37,19 @@ function CurrencyConverter(): ReactElement {
         await e.preventDefault();
         await setErrors([]);
 
-        if (!amount && typeof(amount) !== 'number') {
+        if (!amount) {
            setErrors(errors => [...errors, 'Please enter an amount']);
            setShowErrors(true);
         }
 
-        if (amount && typeof(amount) === 'number') {
+        if (typeof(amount) === 'number') {
             setErrors(errors => [...errors, 'Amount entered must be a number']);
             setShowErrors(true);
         }
 
         setIsLoading(true);
 
-        await axios.get(`https://currency-exchange.p.rapidapi.com/exchange`, {
+        axios.get(`https://currency-exchange.p.rapidapi.com/exchange`, {
             headers: {
                 'Content-Type': 'application/json',
                 'X-RapidAPI-Key': '25c4e740demsh5ccf7fc1d6ae68cp173e85jsna94415c52dc7',
@@ -70,8 +68,6 @@ function CurrencyConverter(): ReactElement {
             setIsLoading(false);
             console.log(err);
         });
-        console.log(exchangeRate);
-        // setExchangedAmount(exchangeRate * amount);
     };
 
     return (

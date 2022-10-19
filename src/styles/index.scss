@@ -7,6 +7,7 @@
 
 .App {
     background-color: $primary-color;
+    min-height: calc(100vh - 70px);
 }
 
 .container {
