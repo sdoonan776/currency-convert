@@ -1,4 +1,4 @@
-import React, {useState, useEffect, ReactElement, MouseEvent, ChangeEvent} from 'react';
+import React, {useState, useEffect, ReactElement, MouseEvent, ChangeEvent, MouseEventHandler} from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -13,42 +13,40 @@ import styles from '../styles/components/CurrencyConverter.module.scss';
 
 import currencies from '../currencies.json';
 import {CurrencyInterface} from "../interfaces/currency";
-
-interface RateItem {
-    name: string
-    rate: number
-}
+import {formatCurrency} from "../utils/helpers";
+import {isNumber} from "util";
 
 function CurrencyConverter(): ReactElement {
     const [currencyFrom, setCurrencyFrom] = useState<string>('USD');
-    const [currencyTo, setCurrencyTo] = useState<string>('USD');
+    const [currencyTo, setCurrencyTo] = useState<string>('CAD');
     const [amount, setAmount] = useState<number>(0);
     const [errors, setErrors] = useState<string[]>([]);
     const [showErrors, setShowErrors] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [exchangeRate, setExchangeRate] = useState<number>(0);
-    const [exchangedResult, setExchangedResult] = useState<number>(0);
+    const [exchangedAmount, setExchangedAmount] = useState<number>(0);
 
     useEffect(() => {
-        console.log(currencyFrom);
-        console.log(currencyTo);
-    },[]);
+        // console.log(currencies[0]);
+    },[currencyFrom, currencyTo]);
 
     const handleCurrencySwitch = (): void => {
-        setCurrencyFrom(currencyFrom);
-        setCurrencyTo(currencyTo);
-        console.log(currencyFrom);
-        console.log(currencyTo);
+        setCurrencyFrom(currencyTo);
+        setCurrencyTo(currencyFrom);
     };
     
     const handleConversion = async (e: MouseEvent<HTMLButtonElement>): Promise<void> => {
         await e.preventDefault();
         await setErrors([]);
-        await setExchangedResult(0);
 
-        if (!amount) {
+        if (!amount && typeof(amount) !== 'number') {
            setErrors(errors => [...errors, 'Please enter an amount']);
            setShowErrors(true);
+        }
+
+        if (amount && typeof(amount) === 'number') {
+            setErrors(errors => [...errors, 'Amount entered must be a number']);
+            setShowErrors(true);
         }
 
         setIsLoading(true);
@@ -66,12 +64,14 @@ function CurrencyConverter(): ReactElement {
         }).then((response: AxiosResponse) => {
             setIsLoading(false);
             setExchangeRate(response.data);
+        }).then(() => {
+            setExchangedAmount(exchangeRate * amount);
         }).catch((err: AxiosError) => {
+            setIsLoading(false);
             console.log(err);
         });
-
-        setExchangedResult(exchangeRate * amount);
-
+        console.log(exchangeRate);
+        // setExchangedAmount(exchangeRate * amount);
     };
 
     return (
@@ -83,7 +83,7 @@ function CurrencyConverter(): ReactElement {
                             <Form>
                                 <Container>
                                     <h2>Choose a Currency to Convert</h2>
-                                        {errors.length !== 0 && showErrors ?
+                                        {errors.length !== 0 && showErrors ? (
                                             <>
                                                 <Alert key="danger" onClose={() => setShowErrors(false)} variant="danger" dismissible>
                                                     <>
@@ -95,7 +95,7 @@ function CurrencyConverter(): ReactElement {
                                                     </>
                                                 </Alert>
                                             </>
-                                        : ''}
+                                        ) : ''}
                                     <div className={styles.converterForm}>
                                         <Form.Group className={`${styles.formGroup}`} controlId="amount">
                                             <Form.Label>Amount</Form.Label>
@@ -104,47 +104,58 @@ function CurrencyConverter(): ReactElement {
 
                                         <Form.Group className={`${styles.formGroup}`} controlId="currencyFrom">
                                             <Form.Label>From</Form.Label>
-                                            <Form.Select defaultValue={currencyFrom} onChange={(e: ChangeEvent<HTMLSelectElement>) => setCurrencyFrom(e.target.value)}>
+                                            <Form.Select defaultValue={`${currencyFrom}`} onChange={(e: ChangeEvent<HTMLSelectElement>) => setCurrencyFrom(e.target.value)}>
                                                 {currencies.map((currency: CurrencyInterface, i: number) =>
-                                                    <option key={i} value={currency.code}>{currency.name}</option>
+                                                    <>
+                                                        {currency.code === currencyFrom ? (
+                                                            <option selected key={i} value={currency.code}>{currency.name}</option>
+                                                        ) : (
+                                                            <option key={i} value={currency.code}>{currency.name}</option>
+                                                        )}
+                                                    </>
                                                 )}
                                             </Form.Select>
                                         </Form.Group>
 
-                                        <Form.Group className={styles.formGroup}>
-                                            <div className={styles.switchButton} onClick={handleCurrencySwitch}>
-                                                <i className="fa-solid fa-arrow-right-arrow-left"></i>
-                                            </div>
-                                        </Form.Group>
+                                        <div className={styles.switchButton} onClick={ handleCurrencySwitch }>
+                                            <i className="fa-solid fa-arrow-right-arrow-left"></i>
+                                        </div>
 
                                         <Form.Group className={`${styles.formGroup}`} controlId="currencyTo">
                                             <Form.Label>To</Form.Label>
-                                            <Form.Select defaultValue={currencyTo} onChange={(e: ChangeEvent<HTMLSelectElement>) => setCurrencyTo(e.target.value)}>
+                                            <Form.Select defaultValue={`${currencyTo}`} onChange={(e: ChangeEvent<HTMLSelectElement>) => setCurrencyTo(e.target.value)}>
                                                 {currencies.map((currency: CurrencyInterface, i: number) =>
-                                                    <option key={i} value={currency.code}>{currency.name}</option>
+                                                    <>
+                                                        {currency.code === currencyTo ? (
+                                                            <option selected key={i} value={currency.code}>{currency.name}</option>
+                                                        ) : (
+                                                            <option key={i} value={currency.code}>{currency.name}</option>
+                                                        )}
+                                                    </>
                                                 )}
                                             </Form.Select>
                                         </Form.Group>
                                     </div>
 
-                                    {isLoading ?
-                                        <div>
+                                    {isLoading ? (
+                                        <div className={styles.spinner}>
                                             <Spinner animation="border" role="status">
                                                 <span className="visually-hidden">Loading...</span>
                                             </Spinner>
                                         </div>
-                                    : ''}
+                                    ) : ''}
 
                                     <div>
-                                        <Button onClick={handleConversion} variant="primary" type="submit">
+                                        <Button className={styles.submitButton} onClick={handleConversion} type="submit">
                                             Convert
                                         </Button>
                                     </div>
-                                    { exchangedResult ?
-                                        <div>
-                                            { exchangedResult }
+
+                                    { exchangedAmount ? (
+                                        <div className={styles.exchangedSection}>
+                                            { formatCurrency(amount) } {currencyFrom} = { formatCurrency(exchangedAmount) } {currencyTo}
                                         </div>
-                                    : ''}
+                                    ) : ''}
                                 </Container>
                             </Form>
                         </Card>
