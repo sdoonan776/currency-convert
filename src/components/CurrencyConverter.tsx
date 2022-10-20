@@ -26,6 +26,7 @@ function CurrencyConverter(): ReactElement {
     const [exchangedAmount, setExchangedAmount] = useState<number>(0);
 
     useEffect(() => {
+        console.log(process.env.REACT_APP_CURRENCY_EXCHANGE_HOST);
     },[]);
 
     const handleCurrencySwitch = (): void => {
@@ -52,8 +53,8 @@ function CurrencyConverter(): ReactElement {
         axios.get(`https://currency-exchange.p.rapidapi.com/exchange`, {
             headers: {
                 'Content-Type': 'application/json',
-                'X-RapidAPI-Key': '25c4e740demsh5ccf7fc1d6ae68cp173e85jsna94415c52dc7',
-                'X-RapidAPI-Host': 'currency-exchange.p.rapidapi.com'
+                'X-RapidAPI-Host': process.env.REACT_APP_CURRENCY_EXCHANGE_HOST ? process.env.REACT_APP_CURRENCY_EXCHANGE_HOST : '',
+                'X-RapidAPI-Key': process.env.REACT_APP_CURRENCY_EXCHANGE_API_KEY ? process.env.REACT_APP_CURRENCY_EXCHANGE_API_KEY : ''
             },
             params: {
                 from: currencyFrom,
