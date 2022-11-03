@@ -13,7 +13,7 @@ EXPOSE 8080
 
 RUN mkdir -p node_modules/.cache && chmod -R 777 node_modules/.cache
 
-CMD [ "node", "server.js" ]
+CMD [ "node", "server.ts" ]
 
 
 
