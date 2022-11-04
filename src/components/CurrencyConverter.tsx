@@ -1,4 +1,4 @@
-import React, {useState, useEffect, ReactElement, MouseEvent, ChangeEvent, MouseEventHandler} from 'react';
+import React, {useState, ReactElement, MouseEvent, ChangeEvent} from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -24,10 +24,6 @@ function CurrencyConverter(): ReactElement {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [exchangeRate, setExchangeRate] = useState<number>(0);
     const [exchangedAmount, setExchangedAmount] = useState<number>(0);
-
-    useEffect(() => {
-        console.log(process.env.REACT_APP_CURRENCY_EXCHANGE_HOST);
-    },[]);
 
     const handleCurrencySwitch = (): void => {
         setCurrencyFrom(currencyTo);

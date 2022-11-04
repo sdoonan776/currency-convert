@@ -1,8 +1,7 @@
 import React, {ReactElement} from 'react';
+import express from 'express';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import CurrencyConverter from './components/CurrencyConverter';
-import HeroBanner from './components/HeroBanner';
 import {Route, Routes} from "react-router-dom";
 import Home from "./pages/home";
 import Login from "./pages/login";
