@@ -5,8 +5,8 @@ const HOST = 'localhost';
 
 const app = express();
 
-app.get('/api', (req, res) => {
-    res.send('Express + Typescript');
+app.get('/api', (req: Request, res) => {
+    res.send();
 });
 
 app.listen(PORT, HOST, () => {

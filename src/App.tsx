@@ -1,5 +1,5 @@
 import React, {ReactElement} from 'react';
-import express from 'express';
+
 import Header from './components/Header';
 import Footer from './components/Footer';
 import {Route, Routes} from "react-router-dom";

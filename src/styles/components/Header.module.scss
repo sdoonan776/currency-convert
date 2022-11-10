@@ -8,4 +8,13 @@
     a {
         color: $text-color;
     }
+    
+    .collapse {
+        justify-content: center;
+    
+        .navbar-nav > a:hover {
+            color: lighten($text-color, 20%); 
+        }
+    }
+    
 }
