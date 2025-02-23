@@ -1,25 +1,38 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Clientside
 
 # dependencies
-/node_modules
-/.pnp
-.pnp.js
+**/node_modules
+**/.pnp
+**/.pnp.js
 
 # testing
-/coverage
+**/coverage
 
 # production
-/build
+**/build
 
 # misc
-.DS_Store
-.env
-.env.development.local
-.env.test.local
-.env.production.local
+**/.DS_Store
+**/server/.env
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
 
-.vscode
+**/.vscode
+
+# Serverside
+
+**/**/node_modules
+**/**/*.log
+lib/**/package-lock.json
+lib/project-files/.vscode
+lib/project-files/config.js
+**/**/dist
+
+test/
+**/**/.DS_Store
