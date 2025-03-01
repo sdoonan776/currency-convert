@@ -33,6 +33,7 @@ lib/**/package-lock.json
 lib/project-files/.vscode
 lib/project-files/config.js
 **/**/dist
+**/**/config/.env
 
 test/
 **/**/.DS_Store

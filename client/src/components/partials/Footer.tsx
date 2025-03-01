@@ -10,8 +10,8 @@ function Footer(): ReactElement {
     return (
         <>
             <footer>
-                <div className='flex justify-center p-6 fixed-bottom-0'>
-                    <p className=''>
+                <div className='text-center py-8 w-full fixed bottom-0'>
+                    <p className='text-gray-500'>
                         { date } Currency Convert &copy; All Rights Reserved
                     </p>
                 </div>

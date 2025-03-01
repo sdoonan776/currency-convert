@@ -21,13 +21,13 @@
     ],
   },
   "include": [
-    "src/**/*.ts",
-    "spec/**/*.ts",
-    "config.ts",
-    "scripts",
-    "eslint.config.ts"
+    "server/src/**/*.ts",
+    "server/spec/**/*.ts",
+    "server/config.ts",
+    "server/scripts",
+    "server/eslint.config.ts"
   ],
   "exclude": [
-    "src/public/*"
+    "server/src/public/*"
   ]
 }
