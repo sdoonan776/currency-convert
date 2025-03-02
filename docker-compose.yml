@@ -1,32 +1,33 @@
-version: '3.8'
-
 services:
-  mongo:
-    image: mongo:latest
-    container_name: mongo
-    environment:
-       MONGO_INITDB_ROOT_USERNAME: root
-       MONGO_INITDB_ROOT_PASSWORD: secret
-    volumes:
-      - mongo-data:/data/db
-    ports:
-      - '27017:27017'
-    restart: always
-
-  mern-app:
-    container_name: mern-app
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - '5000:5000'
-    depends_on:
-      - mongo
-    environment:
-      NODE_ENV: production
-      # Adjust the URI as needed; if Mongo requires authentication,
-      # include user/pass or your connection string accordingly.
-      MONGO_URI: mongodb://root:secret@mongo:27017/mern_database
-
+    php:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        ports:
+            - "8080:80"
+        volumes:
+            - ./:/srv/app
+        environment:
+            - "DB_PORT=3306"
+            - "DB_HOST=mysql"
+            - "MEMCACHED_HOST=localhost"
+        depends_on:
+          - mysql
+    mysql:
+        image: mysql:latest
+        ports:
+            - "3306:3306"
+        volumes:
+            - mysqldata:/var/lib/mysql
+        environment:
+            - "MYSQL_DATABASE=homestead"
+            - "MYSQL_USER=homestead"
+            - "MYSQL_PASSWORD=secret"
+            - "MYSQL_ROOT_PASSWORD=secret"
+    memcached:
+        image: memcached:latest
+        ports:
+            - "11211:11211"
 volumes:
-  mongo-data:
+    mysqldata:
+

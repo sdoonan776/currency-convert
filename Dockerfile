@@ -1,45 +1,49 @@
-# -----------------------
-# Stage 1: Build React
-# -----------------------
-FROM node:23-alpine AS build-client
+FROM php:8.3-apache
 
-WORKDIR /client
+WORKDIR /srv/app
 
-# Copy only package.json and package-lock.json first for better caching
-COPY client/package*.json ./
+COPY --chown=www-data:www-data . /srv/app
 
-# Install client dependencies
-RUN npm install
+COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
+COPY .docker/php/ini/conf.d/memory_limit.ini /usr/local/etc/php/conf.d/memory_limit.ini
 
-# Copy the rest of the client files
-COPY client/ ./
+RUN apt-get update && apt-get install -y \
+    git \
+    zip \
+    curl \
+    sudo \
+    unzip \
+    libicu-dev \
+    libbz2-dev \
+    libzip-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libmcrypt-dev \
+    libreadline-dev \
+    libfreetype6-dev \
+    g++ \
+    wget
 
-# Build the React app for production
-RUN npm run build
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
+RUN docker-php-ext-install \
+    -j$(nproc) gd \
+    bz2 \
+    zip \
+    intl \
+    pcntl \
+    iconv \
+    bcmath \
+    opcache \
+    calendar \
+    pdo_mysql
 
-# -----------------------
-# Stage 2: Setup Server
-# -----------------------
-FROM node:23-alpine
+COPY --from=public.ecr.aws/composer/composer:latest /usr/bin/composer /usr/bin/composer
+COPY . .
 
-WORKDIR /server
+RUN composer update
+RUN chmod -R 777 storage
+RUN service apache2 restart
 
-# Copy only package.json and package-lock.json first for better caching
-COPY server/package*.json ./
-
-# Install server dependencies
-RUN npm install
-
-# Copy the rest of the server files
-COPY server/ ./
-
-# Copy React build output from Stage 1 into server's public/ directory
-# (Adjust the path if your server serves static files from another folder)
-COPY --from=build-client /client/build ./public
-
-# Expose the port your Node/Express app listens on
-EXPOSE 5000
-
-# By default, run the start script
-CMD ["npm", "run", "start"]
+RUN docker-php-ext-install pdo pdo_mysql\
+    && a2enmod rewrite
