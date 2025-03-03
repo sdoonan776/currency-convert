@@ -1,12 +1,14 @@
-import React, { ReactElement } from 'react';
-import ReactDOM from 'react-dom';
+import { JSX } from 'react';
+import SiteLayout from "../layouts/SiteLayout";
 
-function Contact(): ReactElement {
+function Contact(): JSX.Element {
     return (
        <>
-           <div className="container">
-               <h1>Contact</h1>
-           </div>
+           <SiteLayout>
+               <div className="container">
+                   <h1>Contact</h1>
+               </div>
+           </SiteLayout>
        </>
     )
 }

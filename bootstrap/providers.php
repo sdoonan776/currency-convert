@@ -2,5 +2,5 @@
 
 return [
     App\Providers\AppServiceProvider::class,
-    App\Providers\RestClientServiceProvider::class,
+    App\Providers\CurrencyExchangeApiServiceProvider::class,
 ];

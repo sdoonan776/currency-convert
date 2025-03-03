@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import App from '../layouts/App';
+import SiteLayout from '../layouts/SiteLayout';
 
 test('renders app component to be truthy', () => {
-  const wrapper = render(<App/>);
+  const wrapper = render(<SiteLayout/>);
   expect(wrapper).toBeTruthy();
 });
