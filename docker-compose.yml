@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+    php:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        ports:
+            - "8080:80"
+        volumes:
+            - ./:/srv/app
+        environment:
+            - DB_PORT=27017
+            - MONGODB_DATABASE=currency_convert
+            - MONGO_URI=mongodb://mongo:27017/currency_convert
+            - MEMCACHED_HOST=memcached
+        depends_on:
+          - mongo
+    mongo:
+        image: mongo:latest
+        ports:
+            - "27017:27017"
+        volumes:
+            - mongodbdata:/data/db
+        environment:
+            - "MONGO_INITDB_ROOT_USERNAME=root"
+            - "MONGO_INITDB_ROOT_PASSWORD=secret"
+    memcached:
+        image: memcached:latest
+        ports:
+            - "11211:11211"
+volumes:
+    mongodbdata:
+
