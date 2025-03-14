@@ -35,9 +35,10 @@ RUN docker-php-ext-install \
     iconv \
     bcmath \
     opcache \
-    calendar \
+    calendar
 
-RUN pecl install mongodb
+RUN pecl install mongodb \
+    &&  echo "extension=mongodb.so" > $PHP_INI_DIR/conf.d/mongo.ini
 
 COPY --from=public.ecr.aws/composer/composer:latest /usr/bin/composer /usr/bin/composer
 COPY . .
@@ -45,4 +46,3 @@ COPY . .
 RUN composer update
 RUN chmod -R 777 storage
 RUN service apache2 restart
-

@@ -19,8 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-//        $exceptions->report(function (NotFoundException $e) {
-//            Log::error($e->getMessage);
-//        });
-
+        $exceptions->report(function (Exception $e) {
+            Log::error($e->getMessage());
+        });
     })->create();
